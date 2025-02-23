@@ -1,10 +1,13 @@
 "use server";
 
 import { ID, Query } from "node-appwrite";
-import { createAdminClient } from "../appwrite";
-import { appwriteConfig } from "../appwrite/config";
-import { parseStringify } from "../utils";
 import { cookies } from "next/headers";
+
+import { createAdminClient, createSessionClient } from "../appwrite";
+import { appwriteConfig } from "../appwrite/config";
+
+import { parseStringify } from "../utils";
+import { IUser } from "@/types/user";
 
 const getUserByEmail = async (email: string) => {
   const { databases } = await createAdminClient();
@@ -86,4 +89,20 @@ export const verifySecret = async ({
   } catch (e) {
     handleError(e, "Failed to verify OTP");
   }
+};
+
+export const getCurrentUser = async (): Promise<IUser | null> => {
+  const { account, databases } = await createSessionClient();
+
+  const accountResult = await account.get();
+
+  const user = await databases.listDocuments(
+    appwriteConfig.databaseId,
+    appwriteConfig.usersCollectionId,
+    [Query.equal("accountId", accountResult.$id)]
+  );
+
+  if (user.total <= 0) return null;
+
+  return parseStringify(user.documents[0]);
 };
