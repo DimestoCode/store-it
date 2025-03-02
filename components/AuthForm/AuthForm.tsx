@@ -21,16 +21,6 @@ import OTPModal from "../OTPModal";
 
 import { FormType, getAuthStrategy } from "./authStrategies";
 
-// const generateAuthFormSchema = (formType: FormType) => {
-//   return z.object({
-//     email: z.string().email(),
-//     fullName:
-//       formType === "sign-up"
-//         ? z.string().min(2).max(50)
-//         : z.string().optional(),
-//   });
-// };
-
 const AuthForm = ({ type }: { type: FormType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
