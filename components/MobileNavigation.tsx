@@ -17,6 +17,7 @@ import FileUploader from "./FileUploader";
 import type { IUser } from "@/types/user";
 import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "@/const";
+import { signOutUser } from "@/lib/actions/user.actions";
 
 const MobileNavigation = ({ avatar, fullName, email }: IUser) => {
   const [open, setOpen] = useState(false);
@@ -92,7 +93,9 @@ const MobileNavigation = ({ avatar, fullName, email }: IUser) => {
             <Button
               type="submit"
               className="mobile-sign-out-button"
-              onClick={() => {}}
+              onClick={async () => {
+                await signOutUser();
+              }}
             >
               <Image
                 src="/assets/icons/logout.svg"

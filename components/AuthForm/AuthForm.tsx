@@ -17,27 +17,28 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createAccount } from "@/lib/actions/user.actions";
-import OTPModal from "./OTPModal";
+import OTPModal from "../OTPModal";
 
-type FormType = "sign-up" | "sign-in";
+import { FormType, getAuthStrategy } from "./authStrategies";
 
-const generateAuthFormSchema = (formType: FormType) => {
-  return z.object({
-    email: z.string().email(),
-    fullName:
-      formType === "sign-up"
-        ? z.string().min(2).max(50)
-        : z.string().optional(),
-  });
-};
+// const generateAuthFormSchema = (formType: FormType) => {
+//   return z.object({
+//     email: z.string().email(),
+//     fullName:
+//       formType === "sign-up"
+//         ? z.string().min(2).max(50)
+//         : z.string().optional(),
+//   });
+// };
 
 const AuthForm = ({ type }: { type: FormType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [accountId, setAccountId] = useState("");
 
-  const formSchema = generateAuthFormSchema(type);
+  const strategy = getAuthStrategy(type);
+  const formSchema = strategy.getSchema();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,9 +52,9 @@ const AuthForm = ({ type }: { type: FormType }) => {
     setErrorMessage("");
 
     try {
-      const user = await createAccount({
+      const user = await strategy.submit({
+        ...values,
         fullName: values.fullName || "",
-        email: values.email,
       });
       setAccountId(user.accountId);
     } catch {
@@ -116,7 +117,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
           />
 
           <Button type="submit" className="form-submit-button">
-            {type === "sign-in" ? "Sign In" : "Sign Up"}
+            {strategy.buttonLabel}
             {isLoading && (
               <Image
                 src="/assets/icons/loader.svg"
@@ -131,16 +132,12 @@ const AuthForm = ({ type }: { type: FormType }) => {
           {errorMessage && <p className="error-message">*{errorMessage}</p>}
 
           <div className="body-2 flex justify-center">
-            <p className="text-light-100">
-              {type === "sign-in"
-                ? "Don't have an account?"
-                : "Already have an account?"}
-            </p>
+            <p className="text-light-100">{strategy.caption}</p>
             <Link
               className="ml-1 font-medium text-brand"
-              href={type === "sign-in" ? "/sign-up" : "/sign-in"}
+              href={strategy.captionLink}
             >
-              {type === "sign-in" ? "Sign Up" : "Sign In"}
+              {strategy.captionLinkText}
             </Link>
           </div>
         </form>
