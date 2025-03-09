@@ -4,4 +4,5 @@ export interface IUser {
   avatar: string;
   accountId: string;
   ownerId: string;
+  $id: string;
 }

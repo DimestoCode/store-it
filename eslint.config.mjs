@@ -18,6 +18,11 @@ const eslintConfig = [
     "plugin:tailwindcss/recommended",
     "prettier"
   ),
+  {
+    rules: {
+      "no-use-before-define": ["error", { types: false }],
+    },
+  },
 ];
 
 export default eslintConfig;

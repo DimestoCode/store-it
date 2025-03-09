@@ -19,7 +19,13 @@ import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "@/const";
 import { signOutUser } from "@/lib/actions/user.actions";
 
-const MobileNavigation = ({ avatar, fullName, email }: IUser) => {
+const MobileNavigation = ({
+  avatar,
+  fullName,
+  email,
+  $id,
+  accountId,
+}: IUser) => {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -89,7 +95,7 @@ const MobileNavigation = ({ avatar, fullName, email }: IUser) => {
           </nav>
           <Separator className="my-5 bg-light-200/20" />
           <div className="flex flex-col justify-between gap-5 pb-5">
-            <FileUploader />
+            <FileUploader accountId={accountId} ownerId={$id} />
             <Button
               type="submit"
               className="mobile-sign-out-button"
