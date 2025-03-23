@@ -15,10 +15,7 @@ export const signInStrategy = {
   },
 
   async submit(values: z.infer<ReturnType<typeof this.getSchema>>) {
-    return await createAccount({
-      fullName: values.fullName || "",
-      email: values.email,
-    });
+    return await signInUser({ email: values.email });
   },
   buttonLabel: "Sign In",
   caption: "Don't have an account?",
@@ -34,7 +31,10 @@ export const signUpStrategy = {
     });
   },
   async submit(values: z.infer<ReturnType<typeof this.getSchema>>) {
-    return await signInUser({ email: values.email });
+    return await createAccount({
+      fullName: values.fullName || "",
+      email: values.email,
+    });
   },
 
   buttonLabel: "Sign Up",

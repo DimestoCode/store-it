@@ -14,10 +14,10 @@ import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import FileUploader from "./FileUploader";
 
+import { signOutUser } from "@/lib/actions/user.actions";
 import type { IUser } from "@/types/user";
 import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "@/const";
-import { signOutUser } from "@/lib/actions/user.actions";
 
 const MobileNavigation = ({
   avatar,
