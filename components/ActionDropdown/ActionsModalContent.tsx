@@ -42,10 +42,12 @@ export const ShareDialog = ({
   file,
   onInputChange,
   onRemove,
+  isOwner,
 }: {
   file: IFile;
   onInputChange: (emails: string[]) => void;
   onRemove: (email: string) => void;
+  isOwner: boolean;
 }) => {
   return (
     <>
@@ -78,24 +80,36 @@ export const ShareDialog = ({
                 className="flex items-center justify-between gap-2"
               >
                 <p className="subtitle-2">{email}</p>
-                <Button
-                  onClick={() => onRemove(email)}
-                  className="share-remove-user"
-                >
-                  <Image
-                    src="/assets/icons/remove.svg"
-                    alt="remove"
-                    width={24}
-                    height={24}
-                    className="remove-icon"
-                  />
-                </Button>
+
+                {isOwner && (
+                  <Button
+                    onClick={() => onRemove(email)}
+                    className="share-remove-user"
+                  >
+                    <Image
+                      src="/assets/icons/remove.svg"
+                      alt="remove"
+                      width={24}
+                      height={24}
+                      className="remove-icon"
+                    />
+                  </Button>
+                )}
               </li>
             ))}
           </ul>
         </div>
       </div>
     </>
+  );
+};
+
+export const DeleteDialog = ({ file }: { file: IFile }) => {
+  return (
+    <p className="delete-confirmation">
+      Are you sure you want to delete{" "}
+      <span className="delete-file-name">{file.name}</span>?
+    </p>
   );
 };
 

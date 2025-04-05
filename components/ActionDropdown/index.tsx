@@ -13,18 +13,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { RenameDialog, FileDetails, ShareDialog } from "./ActionsModalContent";
+import {
+  RenameDialog,
+  FileDetails,
+  ShareDialog,
+  DeleteDialog,
+} from "./ActionsModalContent";
 
 import type { IFile } from "@/types/file";
 import { actionDropdownReducer, getInitialState } from "./reducer";
 import { actionsDropdownItems } from "@/const";
 import { constructDownloadUrl } from "@/lib/utils";
-import { renameFile, updateFileUsers } from "@/lib/actions/file.actions";
+import {
+  deleteFile,
+  renameFile,
+  updateFileUsers,
+} from "@/lib/actions/file.actions";
 import { ActionDialog } from "./ActionDialog";
 
 const modalItemsList = ["rename", "share", "delete", "details"];
 
-const ActionDropdown = ({ file }: { file: IFile }) => {
+const ActionDropdown = ({
+  file,
+  isOwner,
+}: {
+  file: IFile;
+  isOwner: boolean;
+}) => {
   const path = usePathname();
 
   const [state, dispatch] = useReducer(
@@ -85,6 +100,7 @@ const ActionDropdown = ({ file }: { file: IFile }) => {
             onInputChange={(emails) =>
               dispatch({ type: "SET_EMAILS", payload: emails })
             }
+            isOwner={isOwner}
             onRemove={async (emailToRemove: string) => {
               const updatedEmails = state.emails.filter(
                 (email) => email !== emailToRemove
@@ -105,8 +121,8 @@ const ActionDropdown = ({ file }: { file: IFile }) => {
             }}
           />
         );
-      //   case "delete":
-      //     return <DeleteActionModal />;
+      case "delete":
+        return <DeleteDialog file={file} />;
       case "details":
         return <FileDetails file={file} />;
       default:
@@ -130,7 +146,8 @@ const ActionDropdown = ({ file }: { file: IFile }) => {
 
     share: () =>
       updateFileUsers({ fileId: file.$id, emails: state.emails, path }),
-    delete: async () => console.log("delete"),
+    delete: async () =>
+      deleteFile({ fileId: file.$id, bucketFileId: file.bucketFileId, path }),
   } as const;
 
   return (

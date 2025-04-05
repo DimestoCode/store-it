@@ -6,8 +6,10 @@ import ActionDropdown from "./ActionDropdown";
 
 import { IFile } from "@/types/file";
 import { convertFileSize } from "@/lib/utils";
+import { IUser } from "@/types/user";
 
-const Card = ({ file }: { file: IFile }) => {
+const Card = ({ file, user }: { file: IFile; user: IUser | null }) => {
+  const isOwner = file.owner.$id === user?.$id;
   return (
     <Link href={file.url} target="_blank" className="file-card">
       <div className="flex justify-between">
@@ -19,7 +21,7 @@ const Card = ({ file }: { file: IFile }) => {
           imageClassName="!size-11"
         />
         <div className="flex flex-col items-end justify-between">
-          <ActionDropdown file={file} />
+          <ActionDropdown file={file} isOwner={isOwner} />
           <p className="body-1">{convertFileSize(file.size)}</p>
         </div>
       </div>

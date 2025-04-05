@@ -1,10 +1,12 @@
 import Card from "@/components/Card";
 import Sort from "@/components/Sort";
+
 import { getFiles } from "@/lib/actions/file.actions";
+import { getCurrentUser } from "@/lib/actions/user.actions";
 
 const Page = async ({ params }: SearchParamProps) => {
   const type = ((await params).type as FileType) || "";
-
+  const currentUser = await getCurrentUser();
   const files = await getFiles(type);
 
   return (
@@ -26,7 +28,9 @@ const Page = async ({ params }: SearchParamProps) => {
 
       {files?.total ? (
         <section className="file-list">
-          {files?.documents?.map((file) => <Card key={file.$id} file={file} />)}
+          {files?.documents?.map((file) => (
+            <Card key={file.$id} file={file} user={currentUser} />
+          ))}
         </section>
       ) : (
         <p className="empty-list">No files uploaded</p>
