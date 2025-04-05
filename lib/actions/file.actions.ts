@@ -14,7 +14,7 @@ import {
 } from "../utils";
 import { getCurrentUser } from "./user.actions";
 import type { IUser } from "@/types/user";
-import type { FileResponse } from "@/types/file";
+import type { FileResponse, IFile } from "@/types/file";
 
 export const uploadFile = async ({
   file,
@@ -104,5 +104,55 @@ export const getFiles = async (type: FileType) => {
     return parseStringify(files) as FileResponse;
   } catch (e) {
     handleError(e, "Failed to get files");
+  }
+};
+
+export const renameFile = async ({
+  fileId,
+  name,
+  extension,
+  path,
+}: RenameFileProps) => {
+  const { databases } = await createAdminClient();
+
+  try {
+    const newName = `${name}.${extension}`;
+    const updatedFile = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      {
+        name: newName,
+      }
+    );
+
+    revalidatePath(path);
+    return parseStringify(updatedFile) as IFile;
+  } catch (error) {
+    handleError(error, "Failed to rename file");
+  }
+};
+
+export const updateFileUsers = async ({
+  fileId,
+  emails,
+  path,
+}: UpdateFileUsersProps) => {
+  const { databases } = await createAdminClient();
+
+  try {
+    const updatedFile = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      {
+        users: emails,
+      }
+    );
+
+    revalidatePath(path);
+    return parseStringify(updatedFile) as IFile;
+  } catch (error) {
+    handleError(error, "Failed to share file");
   }
 };

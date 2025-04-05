@@ -5,7 +5,7 @@ import { createAccount, signInUser } from "@/lib/actions/user.actions";
 
 export type FormType = "sign-up" | "sign-in";
 
-// Pattern: Strategy
+// Patterns: Strategy
 export const signInStrategy = {
   getSchema() {
     return z.object({

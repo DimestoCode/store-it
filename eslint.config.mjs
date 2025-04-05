@@ -20,7 +20,16 @@ const eslintConfig = [
   ),
   {
     rules: {
-      "no-use-before-define": ["error", { types: false }],
+      "no-multiple-empty-lines": ["error", { max: 1 }],
+      "no-use-before-define": [
+        "error",
+        {
+          functions: true,
+          classes: true,
+          variables: false,
+          allowNamedExports: false,
+        },
+      ],
     },
   },
 ];

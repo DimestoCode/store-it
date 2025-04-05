@@ -1,7 +1,6 @@
 import Card from "@/components/Card";
 import Sort from "@/components/Sort";
 import { getFiles } from "@/lib/actions/file.actions";
-import { getFileTypesParams } from "@/lib/utils";
 
 const Page = async ({ params }: SearchParamProps) => {
   const type = ((await params).type as FileType) || "";
@@ -19,13 +18,13 @@ const Page = async ({ params }: SearchParamProps) => {
           </p>
 
           <div className="sort-container">
-            <p className="body-1 hidden sm:block text-light-200">Sort by:</p>
+            <p className="body-1 hidden text-light-200 sm:block">Sort by:</p>
             <Sort />
           </div>
         </div>
       </section>
 
-      {!!files?.total ? (
+      {files?.total ? (
         <section className="file-list">
           {files?.documents?.map((file) => <Card key={file.$id} file={file} />)}
         </section>
