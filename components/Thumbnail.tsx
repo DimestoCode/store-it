@@ -32,7 +32,6 @@ const Thumbnail = ({
           isImage && "thumbnail-image"
         )}
       />
-      ;
     </figure>
   );
 };

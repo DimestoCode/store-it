@@ -112,7 +112,7 @@ const FileUploader = ({ className, ownerId, accountId }: FileUploaderProps) => {
                 </div>
 
                 <Image
-                  src="/assets/icon/remove.svg"
+                  src="/assets/icons/remove.svg"
                   width={24}
                   height={24}
                   alt="Remove"

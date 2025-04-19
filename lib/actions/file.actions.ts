@@ -6,12 +6,7 @@ import { revalidatePath } from "next/cache";
 
 import { createAdminClient } from "../appwrite";
 import { appwriteConfig } from "../appwrite/config";
-import {
-  constructFileUrl,
-  getFileType,
-  getFileTypesParams,
-  parseStringify,
-} from "../utils";
+import { constructFileUrl, getFileType, parseStringify } from "../utils";
 import { getCurrentUser } from "./user.actions";
 import type { IUser } from "@/types/user";
 import type { FileResponse, IFile } from "@/types/file";
@@ -70,20 +65,41 @@ const handleError = (e: unknown, message: string) => {
   throw e;
 };
 
-const createQueries = (currentUser: IUser, type: FileType) => {
-  console.log(type);
+const createGetQueries = (
+  currentUser: IUser,
+  types: FileType[],
+  searchText: string,
+  sort: string,
+  limit?: number
+) => {
   const queries = [
     Query.or([
       Query.equal("owner", [currentUser.$id]),
       Query.contains("users", [currentUser.email]),
     ]),
-    Query.equal("type", getFileTypesParams(type)),
   ];
 
+  if (types.length > 0) queries.push(Query.equal("type", types));
+
+  if (searchText) queries.push(Query.contains("name", [searchText]));
+  if (limit) queries.push(Query.limit(limit));
+
+  if (sort) {
+    const [sortBy, orderBy] = sort.split("-");
+
+    queries.push(
+      orderBy === "asc" ? Query.orderAsc(sortBy) : Query.orderDesc(sortBy)
+    );
+  }
   return queries;
 };
 
-export const getFiles = async (type: FileType) => {
+export const getFiles = async ({
+  types = [],
+  searchText = "",
+  sort = "$createdAt-desc",
+  limit,
+}: GetFilesProps) => {
   const { databases } = await createAdminClient();
 
   try {
@@ -93,7 +109,13 @@ export const getFiles = async (type: FileType) => {
       throw new Error("User not found");
     }
 
-    const queries = createQueries(currentUser, type);
+    const queries = createGetQueries(
+      currentUser,
+      types,
+      searchText,
+      sort,
+      limit
+    );
 
     const files = await databases.listDocuments(
       appwriteConfig.databaseId,

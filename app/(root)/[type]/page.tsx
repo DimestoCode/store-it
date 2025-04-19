@@ -3,11 +3,16 @@ import Sort from "@/components/Sort";
 
 import { getFiles } from "@/lib/actions/file.actions";
 import { getCurrentUser } from "@/lib/actions/user.actions";
+import { getFileTypesParams } from "@/lib/utils";
 
-const Page = async ({ params }: SearchParamProps) => {
+const Page = async ({ params, searchParams }: SearchParamProps) => {
   const type = ((await params).type as FileType) || "";
+  const searchText = ((await searchParams)?.query as string) || "";
+  const sort = ((await searchParams)?.sort as string) || "";
+
+  const types = getFileTypesParams(type) as FileType[];
+  const files = await getFiles({ types, searchText, sort });
   const currentUser = await getCurrentUser();
-  const files = await getFiles(type);
 
   return (
     <div className="page-container">
