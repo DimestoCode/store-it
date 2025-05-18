@@ -22,7 +22,7 @@ const eslintConfig = [
     rules: {
       "no-multiple-empty-lines": ["error", { max: 1 }],
       "no-use-before-define": [
-        "error",
+        "warning",
         {
           functions: true,
           classes: true,

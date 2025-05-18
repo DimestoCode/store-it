@@ -33,8 +33,11 @@ const Search = () => {
       }
 
       const files = await getFiles({ types: [], searchText: debouncedQuery });
-      setResults(files.documents);
-      setOpen(true);
+
+      if (files?.documents) {
+        setResults(files.documents);
+        setOpen(true);
+      }
     };
 
     fetchFiles();

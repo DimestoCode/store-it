@@ -23,7 +23,7 @@ import {
 import type { IFile } from "@/types/file";
 import { actionDropdownReducer, getInitialState } from "./reducer";
 import { actionsDropdownItems } from "@/const";
-import { constructDownloadUrl } from "@/lib/utils";
+import { cn, constructDownloadUrl } from "@/lib/utils";
 import {
   deleteFile,
   renameFile,
@@ -36,9 +36,11 @@ const modalItemsList = ["rename", "share", "delete", "details"];
 const ActionDropdown = ({
   file,
   isOwner,
+  className,
 }: {
   file: IFile;
   isOwner: boolean;
+  className?: string;
 }) => {
   const path = usePathname();
 
@@ -163,7 +165,7 @@ const ActionDropdown = ({
           console.log("updated");
         }}
       >
-        <DropdownMenuTrigger className="shad-no-focus">
+        <DropdownMenuTrigger className={cn("shad-no-focus", className)}>
           <Image
             src="/assets/icons/dots.svg"
             alt="dots"

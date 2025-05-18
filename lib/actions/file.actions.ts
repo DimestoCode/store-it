@@ -203,3 +203,46 @@ export const deleteFile = async ({
     handleError(error, "Failed to delete file");
   }
 };
+
+export const getTotalUsedSpace = async () => {
+  const { databases } = await createAdminClient();
+
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser) {
+    throw new Error("User not found");
+  }
+
+  const files = (await databases.listDocuments(
+    appwriteConfig.databaseId,
+    appwriteConfig.filesCollectionId,
+    [Query.equal("owner", [currentUser.$id])]
+  )) as FileResponse;
+
+  const totalSpaceDataDefault = {
+    image: { size: 0, latestDate: "" },
+    document: { size: 0, latestDate: "" },
+    video: { size: 0, latestDate: "" },
+    audio: { size: 0, latestDate: "" },
+    other: { size: 0, latestDate: "" },
+    used: 0,
+    all: 2 * 1024 * 1024 * 1024,
+  };
+
+  const totalSpaceData = files.documents.reduce((spaceData, doc) => {
+    const fileType = doc.type;
+    const fileSize = doc.size;
+
+    spaceData.used += fileSize;
+    spaceData[fileType].size += fileSize;
+    const latestDate = spaceData[fileType].latestDate;
+
+    if (!latestDate || new Date(latestDate) < new Date(doc.$updatedAt)) {
+      spaceData[fileType].latestDate = doc.$updatedAt;
+    }
+
+    return spaceData;
+  }, totalSpaceDataDefault);
+
+  return parseStringify(totalSpaceData) as typeof totalSpaceDataDefault;
+};

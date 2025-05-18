@@ -8,6 +8,8 @@ import { Toaster } from "@/components/ui/sonner";
 
 import { getCurrentUser } from "@/lib/actions/user.actions";
 
+export const dynamic = "force-dynamic";
+
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const currentUser = await getCurrentUser();
 
@@ -15,7 +17,6 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
     return redirect("/sign-in");
   }
 
-  console.log(currentUser.$id);
   return (
     <main className="flex h-screen">
       <Sidebar {...currentUser} />
